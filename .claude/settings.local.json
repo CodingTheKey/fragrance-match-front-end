@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx:*)",
+      "Bash(yarn add @types/node)",
+      "Bash(yarn build)",
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "Bash(cp:*)",
+      "Bash(yarn add:*)"
+    ],
+    "deny": []
+  }
+}
