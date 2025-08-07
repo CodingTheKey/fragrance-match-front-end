@@ -1,14 +1,21 @@
-import { Filter, Package, Sparkles, Grid3X3, List, SlidersHorizontal } from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Filter,
+  Package,
+  Sparkles,
+  Grid3X3,
+  List,
+  SlidersHorizontal,
+} from 'lucide-react'
+import { Toggle } from '@/components/ui/toggle'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface HeaderProps {
-  filteredFragrancesCount: number;
-  activeFiltersCount: number;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-  onFiltersToggle?: () => void;
+  filteredFragrancesCount: number
+  activeFiltersCount: number
+  viewMode: 'grid' | 'list'
+  onViewModeChange: (mode: 'grid' | 'list') => void
+  onFiltersToggle?: () => void
 }
 
 export function Header({
@@ -35,23 +42,29 @@ export function Header({
               <h1 className="text-3xl font-bold text-primary">
                 FragranceMatch
               </h1>
-              <p className="text-sm text-muted-foreground font-medium">Sua jornada olfativa personalizada</p>
+              <p className="text-sm text-muted-foreground font-medium">
+                Sua jornada olfativa personalizada
+              </p>
             </div>
           </div>
-          
+
           {/* Stats e Controles do Header */}
           <div className="flex items-center gap-6">
             {/* Estatísticas Rápidas */}
             <div className="hidden md:flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2 px-3 py-2 bg-accent rounded-xl border border-border">
                 <Package className="w-4 h-4 text-accent-foreground" />
-                <span className="text-foreground font-semibold">{filteredFragrancesCount}</span>
+                <span className="text-foreground font-semibold">
+                  {filteredFragrancesCount}
+                </span>
                 <span className="text-muted-foreground">perfumes</span>
               </div>
               {activeFiltersCount > 0 && (
                 <div className="flex items-center gap-2 px-3 py-2 bg-chart-3/10 border border-chart-3/20 rounded-xl">
                   <Filter className="w-4 h-4 text-chart-3" />
-                  <span className="text-chart-3 font-semibold">{activeFiltersCount}</span>
+                  <span className="text-chart-3 font-semibold">
+                    {activeFiltersCount}
+                  </span>
                   <span className="text-chart-3/80">filtros</span>
                 </div>
               )}
@@ -61,22 +74,26 @@ export function Header({
             <div className="flex items-center gap-3">
               <div className="flex bg-muted rounded-xl p-1 shadow-sm border border-border">
                 <Toggle
-                  pressed={viewMode === "grid"}
-                  onPressedChange={() => onViewModeChange("grid")}
+                  pressed={viewMode === 'grid'}
+                  onPressedChange={() => onViewModeChange('grid')}
                   className="data-[state=on]:bg-card data-[state=on]:shadow-sm data-[state=on]:text-primary px-3 py-2 rounded-lg transition-all duration-200"
                   size="sm"
                 >
                   <Grid3X3 className="w-4 h-4" />
-                  <span className="ml-2 hidden sm:inline text-sm font-medium">Grade</span>
+                  <span className="ml-2 hidden sm:inline text-sm font-medium">
+                    Grade
+                  </span>
                 </Toggle>
                 <Toggle
-                  pressed={viewMode === "list"}
-                  onPressedChange={() => onViewModeChange("list")}
+                  pressed={viewMode === 'list'}
+                  onPressedChange={() => onViewModeChange('list')}
                   className="data-[state=on]:bg-card data-[state=on]:shadow-sm data-[state=on]:text-primary px-3 py-2 rounded-lg transition-all duration-200"
                   size="sm"
                 >
                   <List className="w-4 h-4" />
-                  <span className="ml-2 hidden sm:inline text-sm font-medium">Lista</span>
+                  <span className="ml-2 hidden sm:inline text-sm font-medium">
+                    Lista
+                  </span>
                 </Toggle>
               </div>
 
@@ -102,5 +119,5 @@ export function Header({
         </div>
       </div>
     </header>
-  );
+  )
 }
