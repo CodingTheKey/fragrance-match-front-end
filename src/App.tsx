@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -8,157 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Slider } from '@/components/ui/slider'
-import {
-  Search,
-  Sparkles,
-  Plus,
-  SlidersHorizontal,
-  Grid3X3,
-  List,
-  Star,
-  Filter,
-  X,
-} from 'lucide-react'
+import { Grid3X3, List, Plus, Search, Sparkles, Star, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { AccordBars } from './components/AccordBars'
+import { FilterSidebar } from './components/FilterSidebar'
+import { Header } from './components/Header'
+import { NotesSection } from './components/NotesSection'
 import { fragrances } from './mock/fragrances'
-import { Logo } from './components/Logo'
-
-const accordColors = {
-  citrus: '#32CD32',
-  floral: '#FF69B4',
-  'white floral': '#FFB3E6',
-  fruity: '#FFD93D',
-  fresh: '#98FB98',
-  'fresh spicy': '#FF6347',
-  aromatic: '#87CEEB',
-  rose: '#FFB6C1',
-  green: '#90EE90',
-  almond: '#F5DEB3',
-  sweet: '#FF6B6B',
-  woody: '#8B4513',
-  vanilla: '#F5DEB3',
-  oriental: '#8B008B',
-  aquatic: '#00CED1',
-  musky: '#DEB887',
-  powdery: '#E6E6FA',
-  amber: '#FFBF00',
-  spicy: '#CD853F',
-}
-
-const AccordBars = ({ accordsPercentage, maxBars = 4, compact = false }) => {
-  if (!accordsPercentage) {
-    return null
-  }
-
-  const accordEntries = Object.entries(accordsPercentage)
-    .sort(([, a], [, b]) => parseFloat(b) - parseFloat(a))
-    .slice(0, maxBars)
-
-  return (
-    <div className={`space-y-${compact ? '1.5' : '2.5'}`}>
-      {accordEntries.map(([accord, percentage]) => {
-        const intensity = parseFloat(percentage) / 100
-        const color = accordColors[accord] || '#94A3B8'
-
-        return (
-          <div key={accord} className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span
-                className={`${compact ? 'text-xs' : 'text-xs'} text-gray-700 font-medium capitalize truncate`}
-              >
-                {accord}
-              </span>
-              <span
-                className={`${compact ? 'text-xs' : 'text-xs'} text-gray-600 font-bold ml-2 flex-shrink-0`}
-              >
-                {percentage}
-              </span>
-            </div>
-            <div
-              className={`w-full bg-gray-200 rounded-full ${compact ? 'h-1.5' : 'h-2'} overflow-hidden shadow-inner`}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-700 ease-out shadow-sm"
-                style={{
-                  backgroundColor: color,
-                  width: `${Math.max(intensity * 100, 8)}%`,
-                  opacity: 1,
-                  boxShadow: `inset 0 1px 2px rgba(0,0,0,0.1)`,
-                }}
-              />
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-// Componente para mostrar as notas com imagens
-const NotesSection = ({ notes, maxNotes = 6, compact = false }) => {
-  const allNotes = notes
-    ? [
-        ...(notes.Top || []),
-        ...(notes.Middle || []),
-        ...(notes.Base || []),
-      ].slice(0, maxNotes)
-    : []
-
-  return (
-    <div className="bg-white border border-gray-200 rounded-lg p-3">
-      <h4
-        className={`${compact ? 'text-xs' : 'text-xs'} font-semibold text-gray-600 mb-2 flex items-center gap-2`}
-      >
-        <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
-        Notas Principais
-      </h4>
-
-      {allNotes.length > 0 ? (
-        <div
-          className={`grid ${compact ? 'grid-cols-4 gap-2' : 'grid-cols-3 gap-3'}`}
-        >
-          {allNotes.map((note, index) => (
-            <div
-              key={`${note.name}-${index}`}
-              className="flex flex-col items-center text-center group"
-            >
-              <div
-                className={`${compact ? 'w-8 h-8' : 'w-10 h-10'} bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center overflow-hidden mb-1 border border-gray-200 shadow-sm group-hover:shadow-md transition-all duration-200 relative`}
-              >
-                <img
-                  src={note.imageUrl}
-                  alt={note.name}
-                  className={`${compact ? 'w-5 h-5' : 'w-6 h-6'} object-cover rounded-full`}
-                  onError={e => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'flex'
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full items-center justify-center text-gray-600 text-xs font-bold hidden">
-                  {note.name.charAt(0).toUpperCase()}
-                </div>
-              </div>
-              <span
-                className={`${compact ? 'text-xs' : 'text-xs'} text-gray-700 font-medium leading-tight max-w-full break-words px-1`}
-              >
-                {note.name.length > 8 ? note.name.split(' ')[0] : note.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-3 text-gray-400">
-          <div className="w-6 h-6 border-2 border-dashed border-gray-300 rounded-full mb-2 flex items-center justify-center">
-            <span className="text-xs">?</span>
-          </div>
-          <span className="text-xs text-center">Dados não disponíveis</span>
-        </div>
-      )}
-    </div>
-  )
-}
 
 export function App() {
   const [selectedFragrances, setSelectedFragrances] = useState([])
@@ -168,29 +26,48 @@ export function App() {
   const [priceRange, setPriceRange] = useState([0, 2000])
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
+  const [imagesLoaded, setImagesLoaded] = useState(false)
 
-  const allAccords = useMemo(() => {
-    const accordsSet = new Set()
-    fragrances.forEach(f => f.MainAccords.forEach(a => accordsSet.add(a)))
-    return Array.from(accordsSet).sort()
+  // Pré-carregar todas as imagens
+  useEffect(() => {
+    const preloadImages = async () => {
+      const imagePromises = fragrances.map(fragrance => {
+        return new Promise((resolve, reject) => {
+          const img = new Image()
+          img.src = fragrance.ImageURL
+          img.onload = resolve
+          img.onerror = resolve // Resolve mesmo em erro para não travar
+        })
+      })
+
+      await Promise.all(imagePromises)
+      setImagesLoaded(true)
+    }
+
+    preloadImages()
   }, [])
 
-  const filteredFragrances = useMemo(() => {
-    return fragrances.filter(item => {
-      const matchesSearch =
-        item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.Brand.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesGender =
-        selectedGender === 'all' || item.Gender === selectedGender
-      const matchesAccord =
-        selectedAccord === 'all' || item.MainAccords.includes(selectedAccord)
-      const matchesPrice =
-        parseFloat(item.Price) >= priceRange[0] &&
-        parseFloat(item.Price) <= priceRange[1]
+  // Acordes direto, sem useMemo
+  const allAccords: string[] = (() => {
+    const accordsSet = new Set<string>()
+    fragrances.forEach(f => f.MainAccords.forEach(a => accordsSet.add(a)))
+    return Array.from(accordsSet).sort()
+  })()
 
-      return matchesSearch && matchesGender && matchesAccord && matchesPrice
-    })
-  }, [searchTerm, selectedGender, selectedAccord, priceRange])
+  const filteredFragrances = fragrances.filter(item => {
+    const matchesSearch =
+      item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.Brand.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesGender =
+      selectedGender === 'all' || item.Gender === selectedGender
+    const matchesAccord =
+      selectedAccord === 'all' || item.MainAccords.includes(selectedAccord)
+    const matchesPrice =
+      parseFloat(item.Price) >= priceRange[0] &&
+      parseFloat(item.Price) <= priceRange[1]
+
+    return matchesSearch && matchesGender && matchesAccord && matchesPrice
+  })
 
   const toggleFragrance = fragranceItem => {
     if (selectedFragrances.find(f => f.id === fragranceItem.id)) {
@@ -209,7 +86,7 @@ export function App() {
     }
 
     const allSimilarIds = selectedFragrances.flatMap(f => f.similares || [])
-    const similarCounts = {}
+    const similarCounts: Record<string, number> = {}
 
     allSimilarIds.forEach(id => {
       if (!selectedFragrances.find(f => f.id === id)) {
@@ -228,83 +105,13 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Responsivo */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-gray-200/60 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5">
-          <div className="flex items-center justify-between">
-            <Logo />
-
-            {/* Controls Responsivos */}
-            <div className="flex items-center gap-2 sm:gap-8">
-              {/* Contador de seleções - Sempre visível mas responsivo */}
-              <div className="flex items-center gap-2 sm:gap-3 bg-gray-50/80 rounded-full px-2 sm:px-4 py-1 sm:py-2 backdrop-blur-sm">
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs sm:text-sm font-medium text-gray-700">
-                    <span className="hidden sm:inline">Selecionadas: </span>
-                    <span className="font-bold text-yellow-600">
-                      {selectedFragrances.length}
-                    </span>
-                    /3
-                  </span>
-                </div>
-                {selectedFragrances.length > 0 && (
-                  <div className="flex -space-x-1">
-                    {selectedFragrances.map((frag, index) => (
-                      <div
-                        key={frag.id}
-                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-white shadow-sm flex items-center justify-center"
-                        title={frag.Name}
-                      >
-                        <span className="text-xs font-bold text-yellow-700">
-                          {index + 1}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Botão de Filtros - Mobile */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <Filter className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-600">
-                  Filtros
-                </span>
-              </button>
-
-              {/* Toggle de visualização - Desktop */}
-              <div className="hidden sm:flex bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'grid'
-                      ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                  }`}
-                >
-                  <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Grade</span>
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'list'
-                      ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                  }`}
-                >
-                  <List className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Lista</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        selectedFragrances={selectedFragrances}
+        setShowFilters={setShowFilters}
+        showFilters={showFilters}
+        setViewMode={setViewMode}
+        viewMode={viewMode}
+      />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
         {/* Mobile Filters Overlay */}
@@ -446,165 +253,19 @@ export function App() {
 
         {/* Layout Principal Responsivo */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
-          {/* Sidebar Desktop */}
-          <div className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-32 self-start space-y-6">
-              <Card className="shadow-sm">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-2">
-                    <SlidersHorizontal className="w-5 h-5 text-gray-600" />
-                    <CardTitle className="text-lg">Filtros</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Busca Desktop */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Buscar por nome ou marca...
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="Ex: Sauvage, Dior..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    </div>
-                  </div>
-
-                  {/* Gênero Desktop */}
-                  <div className="w-full">
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Gênero
-                    </label>
-                    <Select
-                      value={selectedGender}
-                      onValueChange={setSelectedGender}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
-                        <SelectItem value="masculine">Masculino</SelectItem>
-                        <SelectItem value="feminine">Feminino</SelectItem>
-                        <SelectItem value="unisex">Unissex</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Acordes Desktop */}
-                  <div className="w-full">
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Acordes
-                    </label>
-                    <Select
-                      value={selectedAccord}
-                      onValueChange={setSelectedAccord}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
-                        {allAccords.map(accord => (
-                          <SelectItem key={accord} value={accord}>
-                            {accord}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Preço Desktop */}
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-sm font-medium text-gray-700">
-                        Preço
-                      </label>
-                      <span className="text-sm text-gray-600">
-                        R$ {priceRange[0]} - R$ {priceRange[1]}
-                      </span>
-                    </div>
-                    <Slider
-                      value={priceRange}
-                      onValueChange={setPriceRange}
-                      max={2000}
-                      min={0}
-                      step={50}
-                      className="w-full"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recomendações Desktop */}
-              {similarFragrances.length > 0 && (
-                <Card className="shadow-sm">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-yellow-100 rounded-lg">
-                        <Sparkles className="w-4 h-4 text-yellow-600" />
-                      </div>
-                      <CardTitle className="text-lg">Recomendações</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {similarFragrances.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-yellow-300 transition-colors cursor-pointer"
-                        onClick={() => toggleFragrance(item)}
-                      >
-                        <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                          {index + 1}
-                        </div>
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                          <img
-                            src={item.ImageURL}
-                            alt={item.Name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium text-gray-600 text-xs uppercase tracking-wide">
-                                {item.Brand}
-                              </p>
-                              <p className="font-bold text-gray-900 text-sm truncate">
-                                {item.Name}
-                              </p>
-                              <div className="mt-1">
-                                <AccordBars
-                                  accordsPercentage={item.MainAccordsPercentage}
-                                  maxBars={2}
-                                  compact={true}
-                                />
-                              </div>
-                            </div>
-                            <div className="text-right ml-2">
-                              <p className="font-bold text-yellow-600">
-                                R$ {item.Price}
-                              </p>
-                              <Button
-                                size="sm"
-                                className="mt-1 h-6 px-2 text-xs bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500"
-                              >
-                                Ver
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
+          <FilterSidebar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedGender={selectedGender}
+            setSelectedGender={setSelectedGender}
+            selectedAccord={selectedAccord}
+            setSelectedAccord={setSelectedAccord}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            allAccords={allAccords}
+            similarFragrances={similarFragrances}
+            toggleFragrance={toggleFragrance}
+          />
 
           {/* Área Principal Responsiva */}
           <div className="lg:col-span-3">
@@ -693,9 +354,12 @@ export function App() {
                           <img
                             src={item.ImageURL}
                             alt={item.Name}
+                            loading="eager"
+                            fetchpriority="high"
+                            decoding="sync"
                             className="w-full h-full object-contain p-4 sm:p-6 group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                             onError={e => {
-                              e.target.src =
+                              e.currentTarget.src =
                                 'https://via.placeholder.com/200x250?text=Sem+Imagem'
                             }}
                           />
@@ -744,20 +408,16 @@ export function App() {
                                 <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
                                 Principais Acordes
                               </h4>
+
                               <AccordBars
                                 accordsPercentage={item.MainAccordsPercentage}
-                                maxBars={3}
                                 compact={true}
                               />
                             </div>
 
                             {/* Notas com Imagens */}
                             <div className="flex-grow">
-                              <NotesSection
-                                notes={item.Notes}
-                                maxNotes={6}
-                                compact={true}
-                              />
+                              <NotesSection notes={item.Notes} compact={true} />
                             </div>
                           </div>
 
@@ -838,9 +498,12 @@ export function App() {
                             <img
                               src={item.ImageURL}
                               alt={item.Name}
+                              loading="eager"
+                              fetchpriority="high"
+                              decoding="sync"
                               className="w-full h-full object-contain p-2 sm:p-4 group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                               onError={e => {
-                                e.target.src =
+                                e.currentTarget.src =
                                   'https://via.placeholder.com/130x160?text=Sem+Imagem'
                               }}
                             />
@@ -909,46 +572,11 @@ export function App() {
                                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
                                   Principais Acordes
                                 </h4>
-                                {item.MainAccordsPercentage && (
-                                  <div className="space-y-1.5">
-                                    {Object.entries(item.MainAccordsPercentage)
-                                      .sort(
-                                        ([, a], [, b]) =>
-                                          parseFloat(b) - parseFloat(a)
-                                      )
-                                      .slice(0, 3)
-                                      .map(([accord, percentage]) => {
-                                        const intensity =
-                                          parseFloat(percentage) / 100
-                                        const color =
-                                          accordColors[accord] || '#94A3B8'
-
-                                        return (
-                                          <div
-                                            key={accord}
-                                            className="flex items-center gap-2"
-                                          >
-                                            <div className="flex-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                                              <div
-                                                className="h-full rounded-full transition-all duration-500"
-                                                style={{
-                                                  backgroundColor: color,
-                                                  width: `${Math.max(intensity * 100, 8)}%`,
-                                                  opacity: 1,
-                                                }}
-                                              />
-                                            </div>
-                                            <span className="text-xs text-gray-700 font-medium whitespace-nowrap min-w-0">
-                                              {accord}
-                                            </span>
-                                            <span className="text-xs text-gray-600 font-bold whitespace-nowrap">
-                                              {percentage}
-                                            </span>
-                                          </div>
-                                        )
-                                      })}
-                                  </div>
-                                )}
+                                <AccordBars
+                                  accordsPercentage={item.MainAccordsPercentage}
+                                  maxBars={3}
+                                  compact={true}
+                                />
                               </div>
 
                               {/* Notas Principais */}
@@ -957,57 +585,11 @@ export function App() {
                                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
                                   Notas Principais
                                 </h4>
-
-                                {(() => {
-                                  const allNotes = item.Notes
-                                    ? [
-                                        ...(item.Notes.Top || []),
-                                        ...(item.Notes.Middle || []),
-                                        ...(item.Notes.Base || []),
-                                      ].slice(0, 6)
-                                    : []
-
-                                  return allNotes.length > 0 ? (
-                                    <div className="grid grid-cols-6 gap-1">
-                                      {allNotes.map((note, index) => (
-                                        <div
-                                          key={`${note.name}-${index}`}
-                                          className="flex flex-col items-center text-center"
-                                        >
-                                          <div className="w-6 h-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center overflow-hidden border border-gray-200 relative">
-                                            <img
-                                              src={note.imageUrl}
-                                              alt={note.name}
-                                              className="w-4 h-4 object-cover rounded-full"
-                                              onError={e => {
-                                                e.target.style.display = 'none'
-                                                e.target.nextSibling.style.display =
-                                                  'flex'
-                                              }}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full items-center justify-center text-gray-600 text-xs font-bold hidden">
-                                              {note.name
-                                                .charAt(0)
-                                                .toUpperCase()}
-                                            </div>
-                                          </div>
-                                          <span className="text-xs text-gray-700 font-medium leading-tight mt-0.5 truncate max-w-full">
-                                            {note.name.split(' ')[0]}
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center justify-center py-2 text-gray-400">
-                                      <div className="w-5 h-5 border border-dashed border-gray-300 rounded-full mr-2 flex items-center justify-center">
-                                        <span className="text-xs">?</span>
-                                      </div>
-                                      <span className="text-xs">
-                                        Dados não disponíveis
-                                      </span>
-                                    </div>
-                                  )
-                                })()}
+                                <NotesSection
+                                  notes={item.Notes}
+                                  maxNotes={6}
+                                  compact={true}
+                                />
                               </div>
                             </div>
 
@@ -1094,6 +676,7 @@ export function App() {
                       <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                         <img
                           src={item.ImageURL}
+                          loading="eager"
                           alt={item.Name}
                           className="w-full h-full object-contain"
                         />

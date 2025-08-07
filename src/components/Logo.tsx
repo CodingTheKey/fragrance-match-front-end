@@ -9,9 +9,7 @@ export function Logo() {
           stroke="currentColor"
           strokeWidth="1"
         >
-          {/* Jasmim - Flor principal */}
           <g transform="translate(12,12)">
-            {/* Centro da flor */}
             <circle
               cx="0"
               cy="0"
@@ -20,7 +18,6 @@ export function Logo() {
               fillOpacity="0.7"
             />
 
-            {/* 5 pétalas do jasmim em formato de estrela */}
             <path
               d="M0,-4.5 C-0.8,-3.2 -0.8,-1.8 0,-1.5 C0.8,-1.8 0.8,-3.2 0,-4.5z"
               fill="currentColor"
@@ -51,7 +48,6 @@ export function Logo() {
               transform="rotate(288)"
             />
 
-            {/* Detalhes do centro */}
             <circle
               cx="0"
               cy="0"
@@ -62,7 +58,6 @@ export function Logo() {
             <circle cx="0" cy="0" r="0.3" fill="currentColor" />
           </g>
 
-          {/* Flores menores ao redor */}
           <g transform="translate(6,6)">
             <circle
               cx="0"
@@ -141,7 +136,6 @@ export function Logo() {
             />
           </g>
 
-          {/* Caule delicado */}
           <path
             d="M12 16.5 Q10 18 8 20"
             stroke="currentColor"
@@ -151,7 +145,6 @@ export function Logo() {
             strokeLinecap="round"
           />
 
-          {/* Folhas pequenas */}
           <path
             d="M10 17 C9 17.5 9 18.5 10 19 C10.5 18.5 10.5 17.5 10 17z"
             fill="currentColor"
@@ -163,7 +156,6 @@ export function Logo() {
             fillOpacity="0.3"
           />
 
-          {/* Partículas de essência flutuando */}
           <g opacity="0.7">
             <circle cx="19" cy="5" r="0.4" fill="currentColor">
               <animate
@@ -192,7 +184,6 @@ export function Logo() {
           </g>
         </svg>
 
-        {/* Efeitos de brilho aprimorados */}
         <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-white/50 rounded-full opacity-80 group-hover:opacity-100 transition-opacity duration-300">
           <div className="w-full h-full bg-white/30 rounded-full animate-pulse"></div>
         </div>

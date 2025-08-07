@@ -1,119 +1,92 @@
-import {
-  Filter,
-  Package,
-  Sparkles,
-  Grid3X3,
-  List,
-  SlidersHorizontal,
-} from 'lucide-react'
-import { Toggle } from '@/components/ui/toggle'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import type { Fragrance } from '@/@types/fragrance'
+import { Filter, Grid3X3, List } from 'lucide-react'
+import { Logo } from './Logo'
 
 interface HeaderProps {
-  filteredFragrancesCount: number
-  activeFiltersCount: number
-  viewMode: 'grid' | 'list'
-  onViewModeChange: (mode: 'grid' | 'list') => void
-  onFiltersToggle?: () => void
+  selectedFragrances: Fragrance[]
+  setShowFilters: (show: boolean) => void
+  showFilters: boolean
+  setViewMode: (mode: string) => void
+  viewMode: string
 }
 
 export function Header({
-  filteredFragrancesCount,
-  activeFiltersCount,
+  selectedFragrances,
+  setShowFilters,
+  showFilters,
+  setViewMode,
   viewMode,
-  onViewModeChange,
-  onFiltersToggle,
 }: HeaderProps) {
   return (
-    <header className="bg-card/90 backdrop-blur-xl border-b border-border sticky top-0 z-50 shadow-xl">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        {/* Header Principal */}
-        <div className="flex items-center justify-between mb-4">
-          {/* Logo e Branding */}
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="p-3 bg-primary rounded-xl shadow-lg">
-                <Sparkles className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <div className="absolute -inset-1 bg-primary rounded-xl blur opacity-20 animate-pulse"></div>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-primary">
-                FragranceMatch
-              </h1>
-              <p className="text-sm text-muted-foreground font-medium">
-                Sua jornada olfativa personalizada
-              </p>
-            </div>
-          </div>
+    <header className="bg-white/95 backdrop-blur-md border-b border-gray-200/60 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5">
+        <div className="flex items-center justify-between">
+          <Logo />
 
-          {/* Stats e Controles do Header */}
-          <div className="flex items-center gap-6">
-            {/* Estatísticas Rápidas */}
-            <div className="hidden md:flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2 px-3 py-2 bg-accent rounded-xl border border-border">
-                <Package className="w-4 h-4 text-accent-foreground" />
-                <span className="text-foreground font-semibold">
-                  {filteredFragrancesCount}
-                </span>
-                <span className="text-muted-foreground">perfumes</span>
-              </div>
-              {activeFiltersCount > 0 && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-chart-3/10 border border-chart-3/20 rounded-xl">
-                  <Filter className="w-4 h-4 text-chart-3" />
-                  <span className="text-chart-3 font-semibold">
-                    {activeFiltersCount}
+          {/* Controls Responsivos */}
+          <div className="flex items-center gap-2 sm:gap-8">
+            {/* Contador de seleções - Sempre visível mas responsivo */}
+            <div className="flex items-center gap-2 sm:gap-3 bg-gray-50/80 rounded-full px-2 sm:px-4 py-1 sm:py-2 backdrop-blur-sm">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></div>
+                <span className="text-xs sm:text-sm font-medium text-gray-700">
+                  <span className="hidden sm:inline">Selecionadas: </span>
+                  <span className="font-bold text-yellow-600">
+                    {selectedFragrances.length}
                   </span>
-                  <span className="text-chart-3/80">filtros</span>
+                  /3
+                </span>
+              </div>
+              {selectedFragrances.length > 0 && (
+                <div className="flex -space-x-1">
+                  {selectedFragrances.map((frag, index) => (
+                    <div
+                      key={frag.id}
+                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-white shadow-sm flex items-center justify-center"
+                      title={frag.Name}
+                    >
+                      <span className="text-xs font-bold text-yellow-700">
+                        {index + 1}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Controles de Visualização */}
-            <div className="flex items-center gap-3">
-              <div className="flex bg-muted rounded-xl p-1 shadow-sm border border-border">
-                <Toggle
-                  pressed={viewMode === 'grid'}
-                  onPressedChange={() => onViewModeChange('grid')}
-                  className="data-[state=on]:bg-card data-[state=on]:shadow-sm data-[state=on]:text-primary px-3 py-2 rounded-lg transition-all duration-200"
-                  size="sm"
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                  <span className="ml-2 hidden sm:inline text-sm font-medium">
-                    Grade
-                  </span>
-                </Toggle>
-                <Toggle
-                  pressed={viewMode === 'list'}
-                  onPressedChange={() => onViewModeChange('list')}
-                  className="data-[state=on]:bg-card data-[state=on]:shadow-sm data-[state=on]:text-primary px-3 py-2 rounded-lg transition-all duration-200"
-                  size="sm"
-                >
-                  <List className="w-4 h-4" />
-                  <span className="ml-2 hidden sm:inline text-sm font-medium">
-                    Lista
-                  </span>
-                </Toggle>
-              </div>
+            {/* Botão de Filtros - Mobile */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="lg:hidden flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              <Filter className="w-4 h-4 text-gray-600" />
+              <span className="text-sm font-medium text-gray-600">Filtros</span>
+            </button>
 
-              {/* Botão Filtros Mobile */}
-              {onFiltersToggle && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onFiltersToggle}
-                  className="md:hidden relative"
-                >
-                  <SlidersHorizontal className="w-4 h-4 mr-2" />
-                  Filtros
-                  {activeFiltersCount > 0 && (
-                    <Badge className="ml-2 bg-chart-3 text-primary-foreground text-xs px-1.5 py-0.5">
-                      {activeFiltersCount}
-                    </Badge>
-                  )}
-                </Button>
-              )}
+            {/* Toggle de visualização - Desktop */}
+            <div className="hidden sm:flex bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  viewMode === 'grid'
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                }`}
+              >
+                <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Grade</span>
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  viewMode === 'list'
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                }`}
+              >
+                <List className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Lista</span>
+              </button>
             </div>
           </div>
         </div>
