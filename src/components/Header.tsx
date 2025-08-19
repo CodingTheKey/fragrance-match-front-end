@@ -1,5 +1,6 @@
 import type { Fragrance } from '@/@types/fragrance'
-import { Filter } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Coins, Filter, User } from 'lucide-react'
 import { Logo } from './Logo'
 
 interface HeaderProps {
@@ -20,35 +21,25 @@ export function Header({
           <Logo />
 
           {/* Controls Responsivos */}
-          <div className="flex items-center gap-2 sm:gap-8">
-            {/* Contador de seleções - Sempre visível mas responsivo */}
-            <div className="flex items-center gap-2 sm:gap-3 bg-gray-50/80 rounded-full px-2 sm:px-4 py-1 sm:py-2 backdrop-blur-sm">
-              <div className="flex items-center gap-1 sm:gap-2">
-                <div className="w-2 h-2 bg-[#A992BB] rounded-full animate-pulse"></div>
-                <span className="text-xs sm:text-sm font-medium text-gray-700">
-                  <span className="hidden sm:inline">Selecionadas: </span>
-                  <span className="font-bold text-[#A992BB]">
-                    {selectedFragrances.length}
-                  </span>
-                  /3
-                </span>
-              </div>
-              {selectedFragrances.length > 0 && (
-                <div className="flex -space-x-1">
-                  {selectedFragrances.map((frag, index) => (
-                    <div
-                      key={frag.id}
-                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#A992BB]/20 border-2 border-white shadow-sm flex items-center justify-center"
-                      title={frag.Name}
-                    >
-                      <span className="text-xs font-bold text-yellow-700">
-                        {index + 1}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Contador de Créditos */}
+            <div className="flex items-center gap-2 bg-gradient-to-r from-[#A992BB]/10 to-purple-500/10 rounded-full px-3 sm:px-4 py-2 backdrop-blur-sm border border-[#A992BB]/20">
+              <Coins className="w-4 h-4 text-[#A992BB]" />
+              <span className="text-xs sm:text-sm font-medium text-gray-700">
+                <span className="hidden sm:inline">Créditos: </span>
+                <span className="font-bold text-[#A992BB]">3</span>
+              </span>
             </div>
+
+
+            {/* Botão de Login */}
+            <Button 
+              variant="outline"
+              className="flex items-center gap-3 px-6 py-3 rounded-lg font-medium text-base"
+            >
+              <User className="w-5 h-5" />
+              <span className="hidden sm:inline">Entrar</span>
+            </Button>
 
             {/* Botão de Filtros - Mobile */}
             <button

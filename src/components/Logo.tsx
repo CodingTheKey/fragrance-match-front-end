@@ -7,9 +7,8 @@ export function Logo() {
           className="w-10 h-10 group-hover:scale-110 transition-transform duration-300"
         />
       <div>
-        <h1 className="text-lg sm:text-3xl font-light text-foreground">
-          Fragrance
-        </h1>
+        <h1 className="text-lg sm:text-3xl font-extralight tracking-wide text-foreground">
+        Fragrancia        </h1>
       </div>
     </div>
   )

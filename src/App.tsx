@@ -17,31 +17,59 @@ import { fragrances } from './mock/fragrances'
 export function App() {
   const [selectedFragrances, setSelectedFragrances] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedGender, setSelectedGender] = useState('all')
-  const [selectedAccord, setSelectedAccord] = useState('all')
+  const [selectedGenders, setSelectedGenders] = useState([])
+  const [selectedOccasions, setSelectedOccasions] = useState([])
+  const [selectedProjections, setSelectedProjections] = useState([])
+  const [selectedLongevities, setSelectedLongevities] = useState([])
   const [priceRange, setPriceRange] = useState([0, 2000])
   const [showFilters, setShowFilters] = useState(false)
   const [loadedImages, setLoadedImages] = useState(new Set())
-
-  const allAccords: string[] = (() => {
-    const accordsSet = new Set<string>()
-    fragrances.forEach(f => f.MainAccords.forEach(a => accordsSet.add(a)))
-    return Array.from(accordsSet).sort()
-  })()
 
   const filteredFragrances = fragrances.filter(item => {
     const matchesSearch =
       item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.Brand.toLowerCase().includes(searchTerm.toLowerCase())
+    
     const matchesGender =
-      selectedGender === 'all' || item.Gender === selectedGender
-    const matchesAccord =
-      selectedAccord === 'all' || item.MainAccords.includes(selectedAccord)
+      selectedGenders.length === 0 || selectedGenders.includes(item.Gender)
+    
+    const matchesOccasion =
+      selectedOccasions.length === 0 || 
+      selectedOccasions.some(occasion => 
+        item.OccasionRanking?.some(o => o.name === occasion && o.score > 0)
+      )
+    
+    const matchesProjection =
+      selectedProjections.length === 0 ||
+      selectedProjections.some(projection => {
+        const projectionRanges = {
+          'Baixa': [0, 30],
+          'Moderada': [30, 60], 
+          'Alta': [60, 100]
+        }
+        const range = projectionRanges[projection] || [0, 100]
+        const sillage = parseFloat(item.Sillage?.replace('%', '') || '0')
+        return sillage >= range[0] && sillage < range[1]
+      })
+    
+    const matchesLongevity =
+      selectedLongevities.length === 0 ||
+      selectedLongevities.some(longevity => {
+        const longevityRanges = {
+          'Baixa': [0, 30],
+          'Moderada': [30, 60],
+          'Alta': [60, 100]
+        }
+        const range = longevityRanges[longevity] || [0, 100]
+        const itemLongevity = parseFloat(item.Longevity?.replace('%', '') || '0')
+        return itemLongevity >= range[0] && itemLongevity < range[1]
+      })
+    
     const matchesPrice =
       parseFloat(item.Price) >= priceRange[0] &&
       parseFloat(item.Price) <= priceRange[1]
 
-    return matchesSearch && matchesGender && matchesAccord && matchesPrice
+    return matchesSearch && matchesGender && matchesOccasion && matchesProjection && matchesLongevity && matchesPrice
   })
 
   const toggleFragrance = fragranceItem => {
@@ -102,48 +130,11 @@ export function App() {
                   </div>
                 </div>
 
-                {/* Gênero Mobile */}
-                <div className="w-full">
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Gênero
-                  </label>
-                  <Select
-                    value={selectedGender}
-                    onValueChange={setSelectedGender}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos</SelectItem>
-                      <SelectItem value="masculine">Masculino</SelectItem>
-                      <SelectItem value="feminine">Feminino</SelectItem>
-                      <SelectItem value="unisex">Unissex</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Acordes Mobile */}
-                <div className="w-full">
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Acordes
-                  </label>
-                  <Select
-                    value={selectedAccord}
-                    onValueChange={setSelectedAccord}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos</SelectItem>
-                      {allAccords.map(accord => (
-                        <SelectItem key={accord} value={accord}>
-                          {accord}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* Filtros Mobile simplificados */}
+                <div className="text-center py-4">
+                  <p className="text-gray-600">
+                    Use a versão desktop para filtros avançados
+                  </p>
                 </div>
 
                 {/* Preço Mobile */}
@@ -176,26 +167,70 @@ export function App() {
           <FilterSidebar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            selectedGender={selectedGender}
-            setSelectedGender={setSelectedGender}
-            selectedAccord={selectedAccord}
-            setSelectedAccord={setSelectedAccord}
+            selectedGenders={selectedGenders}
+            setSelectedGenders={setSelectedGenders}
+            selectedOccasions={selectedOccasions}
+            setSelectedOccasions={setSelectedOccasions}
+            selectedProjections={selectedProjections}
+            setSelectedProjections={setSelectedProjections}
+            selectedLongevities={selectedLongevities}
+            setSelectedLongevities={setSelectedLongevities}
             priceRange={priceRange}
             setPriceRange={setPriceRange}
-            allAccords={allAccords}
+            selectedFragrances={selectedFragrances}
+            allFragrances={fragrances}
           />
 
           {/* Área Principal Responsiva */}
           <div className="lg:col-span-3">
-            {/* Resultados Count */}
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-900">
-                    {filteredFragrances.length}
-                  </span>{' '}
-                  fragrâncias encontradas
-                </span>
+            {/* Busca e Filtros Principais */}
+            <div className="mb-4 sm:mb-6">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Input de Busca */}
+                  <div className="flex-1">
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Buscar fragrâncias
+                    </label>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="Digite o nome ou marca..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+
+                  {/* Filtro de Gênero */}
+                  <div className="w-full sm:w-48">
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Gênero
+                    </label>
+                    <Select 
+                      value={selectedGenders.length === 0 ? 'all' : selectedGenders[0]} 
+                      onValueChange={(value) => {
+                        if (value === 'all') {
+                          setSelectedGenders([])
+                        } else {
+                          setSelectedGenders([value])
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        <SelectItem value="masculine">Masculino</SelectItem>
+                        <SelectItem value="feminine">Feminino</SelectItem>
+                        <SelectItem value="unisex">Unissex</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -225,11 +260,11 @@ export function App() {
                         </div>
                       )}
 
-                      <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
+                      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
                         {/* Imagem */}
-                        <div className="aspect-[4/5] bg-transparent p-3 flex items-center justify-center relative">
+                        <div className="h-60 bg-transparent p-4 flex items-center justify-center relative">
                           {!loadedImages.has(item.id) && (
-                            <div className="absolute inset-3 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg animate-pulse"></div>
+                            <div className="absolute inset-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-sm animate-pulse"></div>
                           )}
                           <img
                             src={item.ImageURL}
@@ -242,18 +277,18 @@ export function App() {
                               setLoadedImages(prev => new Set([...prev, item.id]))
                             }}
                             onError={e => {
-                              e.currentTarget.src = 'https://via.placeholder.com/160x200?text=Sem+Imagem'
+                              e.currentTarget.src = 'https://via.placeholder.com/60x80?text=Sem+Imagem'
                               setLoadedImages(prev => new Set([...prev, item.id]))
                             }}
                           />
                         </div>
 
                         {/* Informações */}
-                        <div className="p-3 text-center">
-                          <p className="text-sm font-semibold text-[#A992BB] uppercase tracking-wide mb-1">
+                        <div className="px-4 pb-4 pt-3 text-center">
+                          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2 opacity-80">
                             {item.Brand}
                           </p>
-                          <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2">
+                          <h3 className="font-bold text-gray-900 text-lg leading-snug line-clamp-2 mb-1">
                             {item.Name}
                           </h3>
                         </div>
@@ -278,8 +313,10 @@ export function App() {
                 <Button
                   onClick={() => {
                     setSearchTerm('')
-                    setSelectedGender('all')
-                    setSelectedAccord('all')
+                    setSelectedGenders([])
+                    setSelectedOccasions([])
+                    setSelectedProjections([])
+                    setSelectedLongevities([])
                     setPriceRange([0, 2000])
                   }}
                   variant="outline"
