@@ -1,6 +1,4 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -10,12 +8,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { Plus, Search, Sparkles, Star, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { AccordBars } from './components/AccordBars'
+import { Search, Star, X } from 'lucide-react'
+import { useState } from 'react'
 import { FilterSidebar } from './components/FilterSidebar'
 import { Header } from './components/Header'
-import { NotesSection } from './components/NotesSection'
 import { fragrances } from './mock/fragrances'
 
 export function App() {
@@ -25,28 +21,8 @@ export function App() {
   const [selectedAccord, setSelectedAccord] = useState('all')
   const [priceRange, setPriceRange] = useState([0, 2000])
   const [showFilters, setShowFilters] = useState(false)
-  const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [loadedImages, setLoadedImages] = useState(new Set())
 
-  // Pré-carregar todas as imagens
-  useEffect(() => {
-    const preloadImages = async () => {
-      const imagePromises = fragrances.map(fragrance => {
-        return new Promise((resolve, reject) => {
-          const img = new Image()
-          img.src = fragrance.ImageURL
-          img.onload = resolve
-          img.onerror = resolve // Resolve mesmo em erro para não travar
-        })
-      })
-
-      await Promise.all(imagePromises)
-      setImagesLoaded(true)
-    }
-
-    preloadImages()
-  }, [])
-
-  // Acordes direto, sem useMemo
   const allAccords: string[] = (() => {
     const accordsSet = new Set<string>()
     fragrances.forEach(f => f.MainAccords.forEach(a => accordsSet.add(a)))
@@ -78,29 +54,6 @@ export function App() {
     }
   }
 
-  // Calcular fragrâncias similares
-  const getSimilarFragrances = () => {
-    if (selectedFragrances.length === 0) {
-      return []
-    }
-
-    const allSimilarIds = selectedFragrances.flatMap(f => f.similares || [])
-    const similarCounts: Record<string, number> = {}
-
-    allSimilarIds.forEach(id => {
-      if (!selectedFragrances.find(f => f.id === id)) {
-        similarCounts[id] = (similarCounts[id] || 0) + 1
-      }
-    })
-
-    return Object.entries(similarCounts)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 3)
-      .map(([id]) => fragrances.find(f => f.id === parseInt(id)))
-      .filter(Boolean)
-  }
-
-  const similarFragrances = getSimilarFragrances()
 
   return (
     <div className="min-h-screen bg-background">
@@ -230,8 +183,6 @@ export function App() {
             priceRange={priceRange}
             setPriceRange={setPriceRange}
             allAccords={allAccords}
-            similarFragrances={similarFragrances}
-            toggleFragrance={toggleFragrance}
           />
 
           {/* Área Principal Responsiva */}
@@ -258,134 +209,56 @@ export function App() {
                     !isSelected && selectedFragrances.length >= 3
 
                   return (
-                    <Card
+                    <div
                       key={item.id}
-                      className={`group relative cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col ${
+                      className={`group relative cursor-pointer transition-all duration-500 hover:scale-105 ${
                         isSelected
-                          ? 'ring-2 ring-[#A992BB] shadow-xl bg-[#A992BB]/10'
-                          : 'shadow-md hover:shadow-lg bg-white'
-                      } ${isDisabled ? 'opacity-50 cursor-not-allowed hover:transform-none hover:shadow-md' : ''}`}
+                          ? 'ring-2 ring-[#A992BB] scale-105'
+                          : ''
+                      } ${isDisabled ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''}`}
                       onClick={() => !isDisabled && toggleFragrance(item)}
                     >
-                      {/* Botão de Adicionar/Remover */}
-                      <div
-                        className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 z-10 shadow-lg ${
-                          isSelected
-                            ? 'bg-gradient-to-br from-red-400 to-red-500 text-white scale-110'
-                            : 'bg-white text-gray-400 group-hover:bg-yellow-100 group-hover:text-yellow-600 group-hover:scale-105'
-                        }`}
-                      >
-                        {isSelected ? (
-                          <span className="text-lg font-bold">×</span>
-                        ) : (
-                          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                        )}
-                      </div>
-
-                      {/* Badge de Destaque */}
+                      {/* Indicador de seleção */}
                       {isSelected && (
-                        <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-[#A992BB] text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                          <Star className="w-2 h-2 sm:w-3 sm:h-3 fill-current" />
-                          <span className="hidden sm:inline">Selecionado</span>
-                          <span className="sm:hidden">★</span>
+                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-[#A992BB] to-purple-600 rounded-full flex items-center justify-center z-10 shadow-lg">
+                          <Star className="w-3 h-3 text-white fill-current" />
                         </div>
                       )}
 
-                      <CardContent className="p-4 sm:p-6 flex flex-col h-full">
-                        {/* Imagem do Produto */}
-                        <div className="aspect-[4/5] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl mb-4 sm:mb-5 flex items-center justify-center overflow-hidden group-hover:shadow-inner transition-all duration-300">
+                      <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
+                        {/* Imagem */}
+                        <div className="aspect-[4/5] bg-transparent p-3 flex items-center justify-center relative">
+                          {!loadedImages.has(item.id) && (
+                            <div className="absolute inset-3 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg animate-pulse"></div>
+                          )}
                           <img
                             src={item.ImageURL}
                             alt={item.Name}
-                            loading="eager"
-                            fetchpriority="high"
-                            decoding="sync"
-                            className="w-full h-full object-contain p-4 sm:p-6 group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
+                            className={`w-full h-full object-contain transition-all duration-300 group-hover:scale-105 ${
+                              loadedImages.has(item.id) ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            style={{ imageRendering: 'auto' }}
+                            onLoad={() => {
+                              setLoadedImages(prev => new Set([...prev, item.id]))
+                            }}
                             onError={e => {
-                              e.currentTarget.src =
-                                'https://via.placeholder.com/200x250?text=Sem+Imagem'
+                              e.currentTarget.src = 'https://via.placeholder.com/160x200?text=Sem+Imagem'
+                              setLoadedImages(prev => new Set([...prev, item.id]))
                             }}
                           />
                         </div>
 
-                        {/* Informações do Produto */}
-                        <div className="flex flex-col flex-grow">
-                          {/* Brand e Nome */}
-                          <div className="text-center mb-3 sm:mb-4">
-                            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                              {item.Brand}
-                            </p>
-                            <h3 className="font-bold text-base sm:text-lg text-gray-900 leading-tight min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center px-2">
-                              {item.Name}
-                            </h3>
-                          </div>
-
-                          {/* Preço e Gênero */}
-                          <div className="flex justify-between items-center mb-3 sm:mb-4">
-                            <span className="text-xl sm:text-2xl font-bold text-[#A992BB]">
-                              R$ {parseFloat(item.Price).toFixed(0)}
-                            </span>
-                            <Badge
-                              variant="secondary"
-                              className={`capitalize font-medium px-2 sm:px-3 py-1 text-xs ${
-                                item.Gender === 'masculine'
-                                  ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                  : item.Gender === 'feminine'
-                                    ? 'bg-pink-100 text-pink-700 border-pink-200'
-                                    : 'bg-[#A992BB]/20 text-[#A992BB] border-[#A992BB]/30'
-                              }`}
-                            >
-                              {item.Gender === 'masculine'
-                                ? 'Masculino'
-                                : item.Gender === 'feminine'
-                                  ? 'Feminino'
-                                  : 'Unissex'}
-                            </Badge>
-                          </div>
-
-                          {/* Seções que crescem para ocupar espaço */}
-                          <div className="flex-grow flex flex-col space-y-3 sm:space-y-4">
-                            {/* Barras de Acordes */}
-                            <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                              <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3 flex items-center gap-2">
-                                <div className="w-2 h-2 bg-[#A992BB] rounded-full"></div>
-                                Principais Acordes
-                              </h4>
-
-                              <AccordBars
-                                accordsPercentage={item.MainAccordsPercentage}
-                                compact={true}
-                              />
-                            </div>
-
-                            {/* Notas com Imagens */}
-                            <div className="flex-grow">
-                              <NotesSection notes={item.Notes} compact={true} />
-                            </div>
-                          </div>
-
-                          {/* Botão de Ação */}
-                          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4">
-                            <Button
-                              className={`w-full text-sm transition-all duration-300 ${
-                                isSelected
-                                  ? 'bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white'
-                                  : 'bg-[#A992BB] hover:bg-[#A992BB]/90 text-white'
-                              }`}
-                              onClick={e => {
-                                e.stopPropagation()
-                                if (!isDisabled) {
-                                  toggleFragrance(item)
-                                }
-                              }}
-                              disabled={isDisabled}
-                            >
-                              {isSelected ? 'Remover Seleção' : 'Selecionar'}
-                            </Button>
-                          </div>
+                        {/* Informações */}
+                        <div className="p-3 text-center">
+                          <p className="text-sm font-semibold text-[#A992BB] uppercase tracking-wide mb-1">
+                            {item.Brand}
+                          </p>
+                          <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2">
+                            {item.Name}
+                          </h3>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   )
                 })}
               </div>
@@ -419,55 +292,6 @@ export function App() {
           </div>
         </div>
 
-        {/* Recomendações Mobile */}
-        {similarFragrances.length > 0 && (
-          <div className="lg:hidden mt-8">
-            <Card className="shadow-sm">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-yellow-100 rounded-lg">
-                    <Sparkles className="w-4 h-4 text-yellow-600" />
-                  </div>
-                  <CardTitle className="text-lg">Recomendações</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {similarFragrances.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-yellow-300 transition-colors cursor-pointer"
-                      onClick={() => toggleFragrance(item)}
-                    >
-                      <div className="w-6 h-6 bg-[#A992BB] rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                        {index + 1}
-                      </div>
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
-                        <img
-                          src={item.ImageURL}
-                          loading="eager"
-                          alt={item.Name}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-600 text-xs uppercase tracking-wide">
-                          {item.Brand}
-                        </p>
-                        <p className="font-bold text-gray-900 text-sm truncate">
-                          {item.Name}
-                        </p>
-                        <p className="font-bold text-yellow-600 text-sm">
-                          R$ {item.Price}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
     </div>
   )

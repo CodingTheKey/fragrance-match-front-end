@@ -1,5 +1,3 @@
-import type { Fragrance } from '@/@types/fragrance'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
@@ -10,8 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { Search, SlidersHorizontal, Sparkles } from 'lucide-react'
-import { AccordBars } from './AccordBars'
+import { Search, SlidersHorizontal } from 'lucide-react'
 
 interface FilterSidebarProps {
   searchTerm: string
@@ -23,8 +20,6 @@ interface FilterSidebarProps {
   priceRange: number[]
   setPriceRange: (range: number[]) => void
   allAccords: string[]
-  similarFragrances: Fragrance[]
-  toggleFragrance: (item: Fragrance) => void
 }
 
 export function FilterSidebar({
@@ -37,8 +32,6 @@ export function FilterSidebar({
   priceRange,
   setPriceRange,
   allAccords,
-  similarFragrances,
-  toggleFragrance,
 }: FilterSidebarProps) {
   return (
     <div className="hidden lg:block lg:col-span-1">
@@ -128,69 +121,6 @@ export function FilterSidebar({
           </CardContent>
         </Card>
 
-        {/* Recomendações Desktop */}
-        {similarFragrances.length > 0 && (
-          <Card className="shadow-sm">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-yellow-100 rounded-lg">
-                  <Sparkles className="w-4 h-4 text-yellow-600" />
-                </div>
-                <CardTitle className="text-lg">Recomendações</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {similarFragrances.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#A992BB] transition-colors cursor-pointer"
-                  onClick={() => toggleFragrance(item)}
-                >
-                  <div className="w-6 h-6 bg-[#A992BB] rounded-full flex items-center justify-center text-white text-sm font-bold">
-                    {index + 1}
-                  </div>
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img
-                      src={item.ImageURL}
-                      alt={item.Name}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-600 text-xs uppercase tracking-wide">
-                          {item.Brand}
-                        </p>
-                        <p className="font-bold text-gray-900 text-sm truncate">
-                          {item.Name}
-                        </p>
-                        <div className="mt-1">
-                          <AccordBars
-                            accordsPercentage={item.MainAccordsPercentage}
-                            maxBars={2}
-                            compact={true}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-right ml-2">
-                        <p className="font-bold text-yellow-600">
-                          R$ {item.Price}
-                        </p>
-                        <Button
-                          size="sm"
-                          className="mt-1 h-6 px-2 text-xs bg-[#A992BB] hover:bg-[#A992BB]/90"
-                        >
-                          Ver
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   )

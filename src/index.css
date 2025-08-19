@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
 /* Caso esteja usando tailwind-variants */
 @custom-variant dark (&:is(.dark *));
@@ -48,9 +49,9 @@
   --sidebar-accent-foreground: #38a169;
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #38a169;
-  --font-sans: Inter, sans-serif;
-  --font-serif: Inter, sans-serif;
-  --font-mono: Inter, sans-serif;
+  --font-sans: 'Nunito', sans-serif;
+  --font-serif: 'Nunito', sans-serif;
+  --font-mono: 'Nunito', monospace;
   --radius: 0.5rem;
   --shadow-2xs: 0px 4px 16px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 4px 16px 0px hsl(0 0% 0% / 0.03);
@@ -102,9 +103,9 @@
   --sidebar-accent-foreground: #48bb78;
   --sidebar-border: #2d3748;
   --sidebar-ring: #48bb78;
-  --font-sans: Inter, sans-serif;
-  --font-serif: Inter, sans-serif;
-  --font-mono: Inter, sans-serif;
+  --font-sans: 'Nunito', sans-serif;
+  --font-serif: 'Nunito', sans-serif;
+  --font-mono: 'Nunito', monospace;
   --radius: 0.5rem;
   --shadow-2xs: 0px 4px 16px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 4px 16px 0px hsl(0 0% 0% / 0.05);
