@@ -20,7 +20,7 @@ export function NotesSection({ notes, compact = false }: NotesSectionProps) {
       <h4
         className={`${compact ? 'text-xs' : 'text-xs'} font-semibold text-gray-600 mb-2 flex items-center gap-2`}
       >
-        <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+        <div className="w-2 h-2 bg-[#A992BB] rounded-full"></div>
         Notas Principais
       </h4>
 
@@ -46,7 +46,7 @@ export function NotesSection({ notes, compact = false }: NotesSectionProps) {
                     ;(target.nextSibling as HTMLElement).style.display = 'flex'
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full items-center justify-center text-gray-600 text-xs font-bold hidden">
+                <div className="absolute inset-0 bg-[#A992BB]/20 rounded-full items-center justify-center text-gray-600 text-xs font-bold hidden">
                   {note.name.charAt(0).toUpperCase()}
                 </div>
               </div>

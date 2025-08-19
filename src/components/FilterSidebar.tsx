@@ -143,10 +143,10 @@ export function FilterSidebar({
               {similarFragrances.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-yellow-300 transition-colors cursor-pointer"
+                  className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#A992BB] transition-colors cursor-pointer"
                   onClick={() => toggleFragrance(item)}
                 >
-                  <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                  <div className="w-6 h-6 bg-[#A992BB] rounded-full flex items-center justify-center text-white text-sm font-bold">
                     {index + 1}
                   </div>
                   <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
@@ -179,7 +179,7 @@ export function FilterSidebar({
                         </p>
                         <Button
                           size="sm"
-                          className="mt-1 h-6 px-2 text-xs bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500"
+                          className="mt-1 h-6 px-2 text-xs bg-[#A992BB] hover:bg-[#A992BB]/90"
                         >
                           Ver
                         </Button>

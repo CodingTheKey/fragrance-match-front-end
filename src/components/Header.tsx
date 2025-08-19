@@ -1,21 +1,17 @@
 import type { Fragrance } from '@/@types/fragrance'
-import { Filter, Grid3X3, List } from 'lucide-react'
+import { Filter } from 'lucide-react'
 import { Logo } from './Logo'
 
 interface HeaderProps {
   selectedFragrances: Fragrance[]
   setShowFilters: (show: boolean) => void
   showFilters: boolean
-  setViewMode: (mode: string) => void
-  viewMode: string
 }
 
 export function Header({
   selectedFragrances,
   setShowFilters,
   showFilters,
-  setViewMode,
-  viewMode,
 }: HeaderProps) {
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200/60 sticky top-0 z-50 shadow-sm">
@@ -28,10 +24,10 @@ export function Header({
             {/* Contador de seleções - Sempre visível mas responsivo */}
             <div className="flex items-center gap-2 sm:gap-3 bg-gray-50/80 rounded-full px-2 sm:px-4 py-1 sm:py-2 backdrop-blur-sm">
               <div className="flex items-center gap-1 sm:gap-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-[#A992BB] rounded-full animate-pulse"></div>
                 <span className="text-xs sm:text-sm font-medium text-gray-700">
                   <span className="hidden sm:inline">Selecionadas: </span>
-                  <span className="font-bold text-yellow-600">
+                  <span className="font-bold text-[#A992BB]">
                     {selectedFragrances.length}
                   </span>
                   /3
@@ -42,7 +38,7 @@ export function Header({
                   {selectedFragrances.map((frag, index) => (
                     <div
                       key={frag.id}
-                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-white shadow-sm flex items-center justify-center"
+                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#A992BB]/20 border-2 border-white shadow-sm flex items-center justify-center"
                       title={frag.Name}
                     >
                       <span className="text-xs font-bold text-yellow-700">
@@ -63,31 +59,6 @@ export function Header({
               <span className="text-sm font-medium text-gray-600">Filtros</span>
             </button>
 
-            {/* Toggle de visualização - Desktop */}
-            <div className="hidden sm:flex bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  viewMode === 'grid'
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                }`}
-              >
-                <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Grade</span>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  viewMode === 'list'
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                }`}
-              >
-                <List className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Lista</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>

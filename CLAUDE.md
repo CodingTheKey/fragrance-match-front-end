@@ -1,8 +1,8 @@
-# FragranceMatch
+# Fragrance
 
 ## 📝 Visão Geral do Projeto
 
-FragranceMatch é uma aplicação web moderna desenvolvida em React para ajudar usuários a descobrir e explorar fragrâncias com base em suas preferências pessoais. A aplicação oferece uma interface intuitiva e elegante para seleção de fragrâncias e recomendações personalizadas baseadas em algoritmos de similaridade.
+Fragrance é uma aplicação web moderna desenvolvida em React para ajudar usuários a descobrir e explorar fragrâncias com base em suas preferências pessoais. A aplicação oferece uma interface intuitiva e elegante para seleção de fragrâncias e recomendações personalizadas baseadas em algoritmos de similaridade.
 
 ## 🛠️ Stack Tecnológico
 
